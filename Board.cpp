@@ -93,11 +93,10 @@ void Board::play_game(){
         print_Board(); //tiks plochy
         get_users_move(x,y);    // tah uzivatele
 
-        game_over = make_move(x,y); //provedeni tahu uzivatele
+        make_move(x,y); //provedeni tahu uzivatele
         if (game_over){ //kontrola konce hry
             print_Board();
         }
-        move++;
     }
 };
 
@@ -143,11 +142,13 @@ void Board::replace_mine(int x, int y){
 }
 
 //Proved tah na plose a vyhodnoceni jestli konce hry
-bool Board::make_move(int x, int y)
+void Board::make_move(int x, int y)
 {
     if ((board[x][y] == '*') & (move!=0)){
         cout << "You loose!"<<endl;
-        return true;
+        game_over = true;
+        move++;
+        return;
     }
     else if((board[x][y] == '*') & (move!=0)){
         replace_mine(x,y);
@@ -155,10 +156,14 @@ bool Board::make_move(int x, int y)
     int depth = 0;
     count_mines_around(x,y,depth);
     if (anyunreveald_left()){
-        return false;
+        game_over = false;
+        move++;
+        return;
     }
     cout<<"You won" << endl;
-    return true;
+    game_over = true;
+    move++;
+    return;
 };
 
 // vypocet rekurzivni odhalenych poli
@@ -173,6 +178,9 @@ void Board::count_mines_around(int x, int y,int depth)
          }
     for (int i = 0;i<sizeof(dx) / sizeof(dx[0]);i++){
         sum = count_mines_in_position(x,y);
+        if(sum && !depth && move){
+            return;
+        }
         if ((x+dx[i] >= shape) || (y+dy[i]>=shape) || (x+dx[i] < 0) || (y+dy[i]<0)){
             continue;
         }
@@ -214,4 +222,34 @@ bool Board::anyunreveald_left() {
     }
     return false;
 }
+
+char Board::get_value(int x, int y){
+    return board[x][y];
+}
+
+bool Board::get_game_state(){
+    return game_over;
+}
+
+void Board::restart(){
+    for (int i = 0; i < shape; ++i) {
+        delete[] board[i];
+    }
+    delete[] board;
+
+    // Allocate new memory for the board and initialize it
+    board = new char*[shape]; 
+    for (int i = 0; i < shape; ++i) {
+        board[i] = new char[shape];
+        for (int j = 0; j < shape; ++j) {
+            board[i][j] = '-';
+        }
+    }
+
+    // Set mines for the new board
+    set_mines();
+    move = 0;
+    game_over = false;
+}
+
 
