@@ -3,8 +3,8 @@
 
 //Konstruktor bez parametru
 Board::Board(){
-    shape = 10;
-    number_of_mines = 10;
+    shape = 20;
+    number_of_mines = 20;
     board = new char*[shape];
     
     for (int i = 0; i < shape; ++i) {
@@ -134,7 +134,6 @@ void Board::replace_mine(int x, int y){
         y_new_bomb = dis(rng);
         if (board[x_new_bomb][y_new_bomb] != '*'){
             board[x_new_bomb][y_new_bomb]='*';
-            cout << x_new_bomb << y_new_bomb<<endl;
             board[x][y] = '-';
             break;
         }
@@ -144,24 +143,23 @@ void Board::replace_mine(int x, int y){
 //Proved tah na plose a vyhodnoceni jestli konce hry
 void Board::make_move(int x, int y)
 {
-    if ((board[x][y] == '*') & (move!=0)){
+    if ((board[x][y] == '*') && (move)){
         cout << "You loose!"<<endl;
-        game_over = true;
+        game_over = 2;
         move++;
         return;
     }
-    else if((board[x][y] == '*') & (move!=0)){
+    else if((board[x][y] == '*') && (!move)){
         replace_mine(x,y);
     }
     int depth = 0;
     count_mines_around(x,y,depth);
     if (anyunreveald_left()){
-        game_over = false;
         move++;
         return;
     }
     cout<<"You won" << endl;
-    game_over = true;
+    game_over = 1;
     move++;
     return;
 };
@@ -227,7 +225,7 @@ char Board::get_value(int x, int y){
     return board[x][y];
 }
 
-bool Board::get_game_state(){
+int Board::get_game_state(){
     return game_over;
 }
 
@@ -250,6 +248,10 @@ void Board::restart(){
     set_mines();
     move = 0;
     game_over = false;
+}
+
+int Board::get_shape(){
+    return shape;
 }
 
 

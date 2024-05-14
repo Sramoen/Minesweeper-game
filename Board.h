@@ -15,7 +15,7 @@ class Board
         int shape; // velikost hracího pole
         int number_of_mines; // pocet min
         char **board; // hrací pole
-        bool game_over = false; // konec hry
+        int game_over = 0; // konec hry
         int move=0; // tah
 
     public:
@@ -39,6 +39,7 @@ class Board
         void replace_mine(int x, int y); // pokud prvni tah a uzivatel odhali minu, funkce minu da jinam
         void get_users_move(int &x, int &y);    // zisk uzivatelskeho tahu
         char get_value(int x, int y);
-        bool get_game_state();
+        int get_game_state();
         void restart();
+        int get_shape();
 };
