@@ -1,10 +1,18 @@
 #include "GameWindow.h"
+#include <filesystem>
 
 GameWindow::GameWindow(){
+    // Get full file path
+    std::filesystem::path cpp_file_path = __FILE__;
+    std::filesystem::path base_dir = cpp_file_path.parent_path();
+
+    // Build the full path to the images folder
+    std::filesystem::path images_dir = base_dir / "images";
     // Load images
     for (int i = 0; i <= 14; i++) {
         sf::Texture texture;
-        if (!texture.loadFromFile("D:/AAA_kodovani/Roupec_C_Letni/gui/images/" + std::to_string(i) + ".png")) {
+        std::filesystem::path image_path = images_dir / (std::to_string(i) + ".png");
+        if (!texture.loadFromFile(image_path.string())) {
             std::cerr << "Failed to load image_" << i << std::endl;
             exit(1); // Exit with an error if image loading fails
         }
